@@ -34,19 +34,11 @@ This function is based on Ghostscript.
 library(d3heatmap)
 p <- d3heatmap(mtcars, scale = "column", colors = "Blues")
 # pdf contains three pages (1 plot, 2 empty ones)
-nwtbplots::jsGraphic2Pdf(p, c(2500, 2000, 50, 50))
+jsGraphic2Pdf(p, c(2500, 2000, 50, 50))
 pdfPageExtract("JSgraphic.pdf", 1, 1)
 pdfPageExtract("JSgraphic.pdf", 1, 1, "JSgraphic.pdf")
 
 file.remove("JSgraphic.pdf", "JSgraphic_pages1_1.pdf", "JSgraphic_extr.pdf")
-
-
-
-path1 <- system.file("una.pdf", package = "una")
-file.copy(path1, getwd())
-pdfPageExtract("una.pdf", 3, 6)
-
-file.remove("una.pdf", "una_pages3_6.pdf")
 
 }
 \seealso{

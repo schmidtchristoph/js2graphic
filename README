@@ -24,7 +24,7 @@ The same graphic as above, saved directly, without manual intervention, as a PDF
 - *pdfcrop( )*        -- Cropping margins from the PDF figure
 - *imagecrop( )*      -- Cropping margins from the PNG figure
 - *pdfPageExtract( )* -- Extract a range of pages from a PDF file
-- *svgFromHtml( )*
+- *svgFromHtml( )*    -- Extract svg graphic data from html/webarchive files
 
 - - -
 ##### Usage
@@ -32,7 +32,7 @@ The same graphic as above, saved directly, without manual intervention, as a PDF
 
 ##### Case 1: Extracting an image from an already rendered JavaScript visualization that is stored as a web page in a html file
 
-In the following example, the JavaScript graphic was rendered in Firefox and saved as a web page. The html file contains the graphic embedded as SVG. Using a text editor, I copy-pasted and saved this SVG code as a file in inst/extdata/alplots2_ff.svg for demonstration purposes. It can be edited in any vector graphics software.  
+In the following example, the JavaScript graphic was rendered in Firefox and saved as a web page. The html file contains the graphic embedded as SVG. Using *svgFromHtml( )*, I saved this SVG code as a file in inst/extdata/alplots2_ff.svg for demonstration purposes. This SVG file can be edited in any vector graphics software.  
 
 ```
 path1 <- system.file("extdata/alplots2_ff.html", package = "js2graphic")
