@@ -31,11 +31,11 @@ p <- forceNetwork(Links = MisLinks, Nodes = MisNodes,
              height = 900, width = 900)
 
 # generated PNG needs a serious cropping
-nwtbplots::jsGraphic2Png(p, c(900, 900, 20, 20), slow = TRUE)
+jsGraphic2Png(p, c(900, 900, 20, 20), slow = TRUE)
 imagecrop("JSgraphic.png", "JSgraphicCr1.png")
 
 # generated PNG needs a serious cropping
-nwtbplots::jsGraphic2Png(p, c(900, 900, 20, 20), slow = FALSE)
+jsGraphic2Png(p, c(900, 900, 20, 20), slow = FALSE)
 imagecrop("JSgraphic.png")
 
 file.remove(c("JSgraphic.png", "JSgraphicCr1.png", "JSgraphic_cr.png"))

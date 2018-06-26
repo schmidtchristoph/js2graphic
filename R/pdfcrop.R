@@ -34,7 +34,7 @@
 #'              height = 900, width = 900)
 #'
 #' # generated pdf needs a serious cropping
-#' nwtbplots::jsGraphic2Pdf(p, c(900, 900, 20, 20), slow = TRUE)
+#' jsGraphic2Pdf(p, c(900, 900, 20, 20), slow = TRUE)
 #'
 #' # in this case, automatic results (no margins given) are not good enough
 #' pdfcrop("JSgraphic.pdf", "JSgraphicCr.pdf")

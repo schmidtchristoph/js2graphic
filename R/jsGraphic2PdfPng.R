@@ -44,8 +44,10 @@
 #'   (\url{http://phantomjs.org}) and the JavaScript code available at
 #'   \url{https://github.com/ariya/phantomjs/blob/master/examples/rasterize.js}
 #'
-#' @note Currently, PhantomJS crashes in case graphics were produced with
-#'   Plotly.
+#' @note Currently, PhantomJS crashes sometimes in case graphics were produced
+#'   with Plotly.
+#'
+#' @author Christoph Schmidt <schmidtchristoph@@users.noreply.github.com>
 #'
 #' @name jsGraphic2Image
 NULL
@@ -67,7 +69,7 @@ NULL
 #'
 #' #####
 #' # already rendered JavaScript visualization saved as web page complete with
-#' # included svg image (alluvial/Sankey diagram)
+#' # embedded svg image (alluvial/Sankey diagram)
 #' #####
 #'
 #' path1 <- system.file("extdata/alplots2_ff.html", package = "js2graphic")
@@ -93,17 +95,18 @@ NULL
 #'
 #' #####
 #' # html saved with htmlwidgets::saveWidget() that contains JavaScript code
-#' # to generate a interactive visualization (alluvial/Sankey diagram)
+#' # to generate an interactive visualization (alluvial/Sankey diagram);
+#' # the html file does not contain the svg file
 #' #####
 #'
-#' path2 <- system.file("extdata/alluvial_js.html", package = "nwtbplots")
+#' path2 <- system.file("extdata/alluvial_js.html", package = "js2graphic")
 #' file.copy(path2, getwd())
 #' file  <- "alluvial_js.html"
 #' jsGraphic2Pdf(file, c(1000, 500, 40, 20))
-#' una::pdfcrop("JSgraphic.pdf")
+#' pdfcrop("JSgraphic.pdf")
 #'
 #' jsGraphic2Png(file, c(1000, 500, 40, 20))
-#' una::imagecrop("JSgraphic.png")
+#' imagecrop("JSgraphic.png")
 #'
 #' file.remove(c(file, "JSgraphic.pdf", "JSgraphic_cr.pdf",
 #'             "JSgraphic.png", "JSgraphic_cr.png"))
@@ -149,15 +152,55 @@ NULL
 #' p <- d3heatmap(mtcars, scale = "column", colors = "Blues")
 #' jsGraphic2Pdf(p, c(2500, 2000, 50, 50))
 #' # removing the last 2 empty pages from JSgraphic.pdf
-#' una::pdfPageExtract("JSgraphic.pdf", 1, 1, "JSgraphic2.pdf")
+#' pdfPageExtract("JSgraphic.pdf", 1, 1, "JSgraphic2.pdf")
 #' # cropping with adding a little extra white margin to the automatic crop
-#' una::pdfcrop("JSgraphic2.pdf", "JSgraphic3.pdf", c(-30, -30, -70, -30))
+#' pdfcrop("JSgraphic2.pdf", "JSgraphic3.pdf", c(-30, -30, -70, -30))
+#' # JSgraphic3.pdf contains the final cropped figure
 #'
 #' file.remove("JSgraphic.pdf", "JSgraphic2.pdf", "JSgraphic3.pdf")
 #'
-#' @author Christoph Schmidt <schmidtchristoph@@users.noreply.github.com>
+#'
+#'
+#' #####
+#' # using a generated graphic/plot object directly
+#' # plotly example 1
+#' #####
+#'
+#' library(plotly)
+#' p <- plot_ly(data=iris, x=~Sepal.Length, y=~Petal.Length, type="scatter", mode="markers")
+#' jsGraphic2Pdf(p, c(1200, 1200, 0, 0), slow = FALSE)
+#' # removing the last 2 empty pages from JSgraphic.pdf
+#' pdfPageExtract("JSgraphic.pdf", 1, 1, "JSgraphic2.pdf")
+#'
+#' file.remove("JSgraphic.pdf", "JSgraphic2.pdf")
+#'
+#'
+#'
+#' #####
+#' # using a generated graphic/plot object directly
+#' # plotly example 2
+#' #####
+#' library(plotly)
+#'
+#' trace_0 <- rnorm(100, mean = 5)
+#' trace_1 <- rnorm(100, mean = 0)
+#' trace_2 <- rnorm(100, mean = -5)
+#' x <- c(1:100)
+#'
+#' data <- data.frame(x, trace_0, trace_1, trace_2)
+#'
+#' p <- plot_ly(data, x = ~x, y = ~trace_0, name = 'trace 0', type = 'scatter', mode = 'lines') %>%
+#'   add_trace(y = ~trace_1, name = 'trace 1', mode = 'lines+markers') %>%
+#'   add_trace(y = ~trace_2, name = 'trace 2', mode = 'markers')
+#'
+#' jsGraphic2Pdf(p, c(1200, 1200, 0, 0), slow = FALSE)
+#' # removing the last 2 empty pages from JSgraphic.pdf
+#' pdfPageExtract("JSgraphic.pdf", 1, 1, "JSgraphic2.pdf")
+#' file.remove("JSgraphic.pdf", "JSgraphic2.pdf")
+#'
+# #' @author Christoph Schmidt <schmidtchristoph@@users.noreply.github.com>
 
-# 20.06.18
+# 26.06.18
 
 jsGraphic2Pdf <- function(graphic, plotDims = c(1000, 500, 20, 20), outFile = "JSgraphic.pdf", pathPhantomJS = NULL, slow = FALSE, highRes = TRUE){
 
@@ -200,6 +243,7 @@ jsGraphic2Pdf <- function(graphic, plotDims = c(1000, 500, 20, 20), outFile = "J
 # #' @describeIn jsGraphic2Pdf Store JS graphics as PNG file
 #'
 #' @export
+# #' @author Christoph Schmidt <schmidtchristoph@@users.noreply.github.com>
 
 # 16.03.17
 
@@ -247,22 +291,23 @@ jsGraphic2Png <- function(graphic, plotDims = c(1000, 500, 20, 20), outFile = "J
 
 # Function that calls PhantomJS to save the JS visualization as pdf/png
 # 16.03.17
+# @author Christoph Schmidt <schmidtchristoph@@users.noreply.github.com>
 
 renderJS2Figure <- function(htmlName, remHtml, figlayout, outFile, pathPhantomJS, slow, highRes, ...){
    if(slow){
       if(highRes){
-         phantomScriptPath <- system.file("phantomjs/rasterize_slow_highRes.js", package = "nwtbplots")
+         phantomScriptPath <- system.file("phantomjs/rasterize_slow_highRes.js", package = "js2graphic")
       }
       else {
-         phantomScriptPath <- system.file("phantomjs/rasterize_slow.js", package = "nwtbplots")
+         phantomScriptPath <- system.file("phantomjs/rasterize_slow.js", package = "js2graphic")
       }
    }
    else {
       if(highRes){
-         phantomScriptPath <- system.file("phantomjs/rasterize_highRes.js", package = "nwtbplots")
+         phantomScriptPath <- system.file("phantomjs/rasterize_highRes.js", package = "js2graphic")
       }
       else {
-         phantomScriptPath <- system.file("phantomjs/rasterize.js", package = "nwtbplots")
+         phantomScriptPath <- system.file("phantomjs/rasterize.js", package = "js2graphic")
       }
    }
 
