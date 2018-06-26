@@ -32,7 +32,7 @@ The same graphic as above, saved directly, without manual intervention, as a PDF
 
 In the following example, the JavaScript graphic was rendered in Firefox and saved as a web page. The html file contains the graphic embedded as SVG. Using *svgFromHtml( )*, I saved this SVG code as a file in inst/extdata/alplots2_ff.svg for demonstration purposes. This SVG file can be edited in any vector graphics software.  
 
-```
+```r
 path1 <- system.file("extdata/alplots2_ff.html", package = "js2graphic")
 file.copy(path1, getwd())
 
@@ -56,7 +56,7 @@ The shown alluvial plot itself was generated with a function based on a networkD
 
 The html file might contain JS code to generate an interactive visualization that is saved as a static image file.
 
-```
+```r
 library(d3heatmap)
 p <- d3heatmap(mtcars, scale = "column", colors = "Blues")
 
@@ -71,7 +71,7 @@ pdfcrop("JSgraphic2.pdf", "JSgraphic3.pdf", c(-30, -30, -70, -30)) # cropping wi
 file.remove(c("heatmap.html", "JSgraphic.pdf", "JSgraphic2.pdf", "JSgraphic3.pdf"))
 ```
 
-```
+```r
 path2 <- system.file("extdata/alluvial_js.html", package = "js2graphic")
 file.copy(path2, getwd())
 
@@ -93,7 +93,7 @@ file.remove(c("alluvial_js.html", "JSgraphic.pdf", "JSgraphic_cr.pdf",
 
 E.g. the social network at https://christophergandrud.github.io/networkD3/
 
-```
+```r
 library(networkD3)
 data(MisLinks)
 data(MisNodes)
@@ -115,7 +115,7 @@ file.remove(c("JSgraphic.pdf", "JSgraphic_cr.pdf",
 
 Another example, taken from https://plot.ly/r/line-and-scatter/
 
-```
+```r
 library(plotly)
 p <- plot_ly(data=iris, x=~Sepal.Length, y=~Petal.Length, type="scatter", mode="markers")
 jsGraphic2Pdf(p, c(1200, 1200, 0, 0), slow = FALSE)
