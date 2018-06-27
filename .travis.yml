@@ -1,0 +1,12 @@
+language: r
+
+cache: packages
+
+before_install:
+  - tlmgr install pdfcrop
+
+addons:
+  apt:
+    packages:
+      - ghostscript
+      - imagemagick 
